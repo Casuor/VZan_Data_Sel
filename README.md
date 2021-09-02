@@ -3,17 +3,5 @@
 
 #### 目录结构
 
-┝<.git>
-┝.gitattributes
-┝7za.exe
-┝<arch>
-┝Excel.ico
-┝<extra>
-┝<input>
-┝main.py
-┝<output>
-┝output_2.zip
-┝pwd.json
-┝README.md
-┝<XLS>
-┝<XLSX>
+![image-20210902134812158](https://raw.githubusercontent.com/Casuor/ImgCDN/master/img/image-20210902134812158.png)
+
