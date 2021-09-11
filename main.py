@@ -1,3 +1,5 @@
+# coding:utf-8
+# !/usr/bin/python
 import builtins
 import json
 import random
@@ -16,65 +18,67 @@ import zipfile
 from gooey import Gooey, GooeyParser
 import sys
 
-""" 
 
-打开指定所有工作簿(待完善)
-按照指定格式筛选数据（待完善）
-    是否将所有表汇集到一个工作簿上(待确认)
-删除指定列数据（已完成）
-按指定列排序（尼玛，需要重构数据，分钟&秒全部映射成秒，进行排序）
-设置单元格格式（easy）
+# """
+#
+# 打开指定所有工作簿(待完善)
+# 按照指定格式筛选数据（待完善）
+#     是否将所有表汇集到一个工作簿上(待确认)
+# 删除指定列数据（已完成）
+# 按指定列排序（尼玛，需要重构数据，分钟&秒全部映射成秒，进行排序）
+# 设置单元格格式（easy）
+#
+# 程序打包（okay）
+# 功能扩展（想屁吃）
+#
+# # 208 238 行代码决定由id还是用户昵称筛选
+#
+# 筛选完成后删除xls xlsx input目录下文件
+# output文件夹下文件压缩
+#
+#
+# 20210905
+# 新增gooey gui
+# 数据类型错误详细处理
+# """
 
-程序打包（okay）
-功能扩展（想屁吃）
 
-# 208 238 行代码决定由id还是用户昵称筛选
-
-筛选完成后删除xls xlsx input目录下文件
-output文件夹下文件压缩
-
-
-20210905 
-新增gooey gui
-数据类型错误详细处理
-"""
-
-
-@Gooey(
-    program_name='微赞数据筛选',
-    default_size=(600, 480),
-    required_cols=1,  # number of columns in the "Required" section
-    optional_cols=2,
-    menu=[{
-        'name': '关于',
-        'items': [{
-            'type': 'AboutDialog',
-            'menuTitle': '关于',
-            'name': '微赞数据筛选',
-            'description': '微赞数据筛选',
-            'version': '0.2.0',
-            'copyright': '2021',
-            'website': '',
-            'developer': 'https://casuor.top',
-            'license': 'GNU'
-        }, {
-            'type': 'Link',
-            'menuTitle': '程序下载地址',
-            'url': 'https://casuor.top'
-        }]
-    }]
-)
+# @Gooey(
+#     program_name='微赞数据筛选',
+#     default_size=(600, 480),
+#     required_cols=1,  # number of columns in the "Required" section
+#     optional_cols=2,
+#     menu=[{
+#         'name': '关于',
+#         'items': [{
+#             'type': 'AboutDialog',
+#             'menuTitle': '关于',
+#             'name': '微赞数据筛选',
+#             'description': '微赞数据筛选',
+#             'version': '0.2.0',
+#             'copyright': '2021',
+#             'website': '',
+#             'developer': 'https://casuor.top',
+#             'license': 'GNU'
+#         }, {
+#             'type': 'Link',
+#             'menuTitle': '程序下载地址',
+#             'url': 'https://casuor.top'
+#         }]
+#     }]
+# )
 def init():
-    parser = GooeyParser(
-        description="程序执行前须知：\n1.务必确认电脑上有正版Excel\n2.务必检查文件名是否以【报名】或【话题】开头\n3.请确认下载好的文件格式正确，即【.xls】或【.xlsx】(没有中宏病毒)")
-    parser.add_argument('num', metavar='必填参数', help='请输入您要归类的直播(例：1号线，输入1,点击开始):')
-    args = parser.parse_args()
-    num = args.num
+    # 程序执行前须知：\n1.务必确认电脑上有正版Excel\n2.务必检查文件名是否以【报名】或【话题】开头\n3.请确认下载好的文件格式正确，即【.xls】或【.xlsx】(没有中宏病毒)
+    # parser = GooeyParser(
+    #     description="程序执行前须知：\n1.务必确认电脑上有正版Excel\n2.务必检查文件名是否以【报名】或【话题】开头\n3.请确认下载好的文件格式正确，即【.xls】或【.xlsx】(没有中宏病毒)")
+    # parser.add_argument('num', metavar='必填参数', help='请输入您要归类的直播(例：1号线，输入1,点击开始):')
+    # args = parser.parse_args()
+    # num = args.num
     # # 1号线
     res1_list = (
         601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622,
         623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644,
-        645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659
+        645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 724, 737
 
     )
 
@@ -84,7 +88,7 @@ def init():
         723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742,
     )
 
-    # num = input('请输入您要归类的直播(例：1号线，输入1回车):')
+    num = input('请输入您要归类的直播(例：1号线，输入1回车):')
     print('已接受输入数据,正在处理......')
     if num == '1':
         print('已接受输入数据【1】,正在处理1号线数据......')
@@ -261,13 +265,10 @@ def get_user_list(sel_id):
 
 
 def get_user_data(sel_id):
-    # 被筛选出来的门店数据
     sel_list = []
-    # 读取的全部用户数据
-    total_user_list = []
-    # 全局的df
-    df = pd.DataFrame()
     user_list = get_user_list(sel_id)
+    total_user_list = []
+    dataframe = pd.DataFrame()
     if user_list is None:
         print(sel_id, '查询不到此数据,正在跳过...')
         pass
@@ -277,7 +278,6 @@ def get_user_data(sel_id):
             # 取决去微赞数据:id是否有结尾.0
             user = str(user).split('.')[0]
             sel_list.append(user)
-        # print(sel_list)
         file_path = os.getcwd()
         input_path = file_path + '\\input'
         com_path = input_path + '\\用户数据-已筛选.xlsx'
@@ -285,14 +285,16 @@ def get_user_data(sel_id):
         data = pd.read_excel(com_path)
         # print(data)
         result = np.array(data)
-        # print(result)
         lens = len(result)
         # print(lens)
+        # 取出报名表有的而话题表没有的数据
+
         if lens >= 0:
             values = pd.DataFrame(result, index=[x for x in range(1, lens + 1)], columns=list('ABCDEFG'))
-            df = values[values['A'].isin(sel_list)]
-            df = pd.DataFrame(df)
-            if df.empty:
+            dataframe = values[values['A'].isin(sel_list)]
+            dataframe = pd.DataFrame(dataframe)
+            # print(df)
+            if dataframe.empty:
                 print('根据报名表id在话题表中查不到指定数据\n原因可能是：您在设置门店编码时使用的是文本框\n为避免出现类似问题，门店编码组件请选择数字！！')
                 '''处理报名表中个别数据在话题表中查询不到的情况'''
                 print('程序即将转换id的类型进行筛选！')
@@ -305,28 +307,29 @@ def get_user_data(sel_id):
                 # print('交集数据：', list(set(ntul).intersection(set(sel_list))))
                 new_sel_list = list(set(ntul).intersection(set(sel_list)))
                 new_sel_list = [int(y) for y in new_sel_list]
-                '''处理报名表中个别数据在话题表中查询不到的情况'''
+                # '''处理报名表中个别数据在话题表中查询不到的情况'''
                 # print(values['A'])
                 dataframe = values[values['A'].isin(new_sel_list)]
                 # print(dataframe)
                 dataframe = pd.DataFrame(dataframe)
                 if dataframe.empty:
                     print('转换id类型筛选也出现了错误，请检查话题表是否有数据或话题表是否相互对应！！')
-                    sys.exit()
+                    exit()
+                # pass
                 # df.rename(
                 #     columns={'A': '用户昵称', 'B': '性别', 'C': '真是姓名', 'D': '联系号码', 'E': '收集来源', 'F': '用户状态',
                 #              'G': 'IP', 'H': '地区', 'I': '首次观看直播时间', 'J': '最近观看直播时间', 'K': '直播观看时长'},
                 #     inplace=True)
-                df.rename(
+                dataframe.rename(
                     columns={'A': '用户id', 'B': '用户昵称', 'C': 'IP', 'D': '地区', 'E': '首次观看直播时间', 'F': '最近观看直播时间',
                              'G': '直播观看时长'},
                     inplace=True)
                 writer = pd.ExcelWriter(final_path)
-                df.to_excel(writer, index=False)
+                dataframe.to_excel(writer, index=False)
                 writer.save()
         else:
             print('程序中断执行：请检查话题数据表中是否有数据！！！')
-            sys.exit()
+            exit()
 
 
 def get_extra_list(id):
@@ -347,9 +350,9 @@ def get_extra_list(id):
         716.0, 717.0, 718.0, 719.0, 720.0, 721.0, 722.0, 723.0, 724.0, 725.0, 726.0, 727.0, 728.0, 729.0, 730.0, 731.0,
         732.0,
         733.0, 734.0, 735.0, 736.0, 737.0, 738.0, 739.0, 740.0, 741.0, 742.0)
-    '''
-    针对res3_list报名表->门店编码是》文本框《
-    '''
+    # '''
+    # 针对res3_list报名表->门店编码是》文本框《
+    # '''
     # res3_list = [str(x) for x in res3_list]
     file_path = os.getcwd()
     xlsx_path = file_path + '\\XLSX'
@@ -386,7 +389,7 @@ def get_extra_data(id):
     result = get_extra_list(id)
     if result is None:
         print('请检查[XLS]目录中是否有文件！！！')
-        sys.exit()
+        exit()
     else:
         id_list = result[0]
         # print(len(id_list))
@@ -432,14 +435,14 @@ def get_extra_data(id):
                     # print('交集数据：', list(set(ntul).intersection(set(sel_list))))
                     new_sel_list = list(set(ntul).intersection(set(sel_list)))
                     new_sel_list = [int(y) for y in new_sel_list]
-                    '''处理报名表中个别数据在话题表中查询不到的情况'''
+                    # '''处理报名表中个别数据在话题表中查询不到的情况'''
                     # print(values['A'])
                     dataframe = values[values['A'].isin(new_sel_list)]
                     # print(dataframe)
                     dataframe = pd.DataFrame(dataframe)
                     if dataframe.empty:
                         print('转换id类型筛选也出现了错误，请检查话题表是否有数据或话题表是否相互对应！！')
-                        sys.exit()
+                        exit()
                     # df.rename(
                     #     columns={'A': '用户昵称', 'B': '性别', 'C': '真是姓名', 'D': '联系号码', 'E': '收集来源', 'F': '用户状态',
                     #              'G': 'IP', 'H': '地区', 'I': '首次观看直播时间', 'J': '最近观看直播时间', 'K': '直播观看时长'},
@@ -454,7 +457,7 @@ def get_extra_data(id):
                     writer.save()
             else:
                 print('程序中断执行：请检查话题数据表中是否有数据！！！')
-                sys.exit()
+                exit()
 
 
 def del_extra_files():
@@ -613,15 +616,6 @@ if __name__ == '__main__':
 
         # compress_files(1, '.\\output')
         compress_files(num_list[1])
-
-        # 加密压缩
-        final_pwd_file = get_dict_pwd_file()
-        for pwd, arch_item in final_pwd_file.items():
-            arch_item_name = os.path.splitext(arch_item)[0]
-            print('正在加密压缩文件:', arch_item_name)
-            encrypt_arch_files(arch_item_name, pwd, arch_item)
-            sys.exit()
-
         # 删除垃圾文件
         del_extra_files()
         t2 = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
@@ -634,5 +628,14 @@ if __name__ == '__main__':
             print('恭喜您花费了' + str(minutes) + '分' + str(seconds) + '秒把数据筛选完成了')
         else:
             print('恭喜您花费了' + str(seconds) + '秒把数据筛选完成了')
+
+        # 加密压缩
+        final_pwd_file = get_dict_pwd_file()
+        for pwd, arch_item in final_pwd_file.items():
+            arch_item_name = os.path.splitext(arch_item)[0]
+            print('正在加密压缩文件:', arch_item_name)
+            encrypt_arch_files(arch_item_name, pwd, arch_item)
+            exit()
+
     except KeyboardInterrupt as e:
         pass
